@@ -14,27 +14,28 @@ jobs:
     name: terraform
     runs-on: ubuntu-latest
     steps:
-      -name: Checkout code
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    -name: setup terraform
+    - name: setup terraform
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.12.1
         cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
 
-      - name: terraform init
-        run: terraform init
+    - name: terraform init
+      run: terraform init
 
-      - uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: terraform plan
-        run: terraform plan -out=tfplan
+    - name: terraform plan
+      run: terraform plan -out=tfplan
 
-      - name: terraform apply
-        run: terraform apply -auto-approve tfplan
+    - name: terraform apply
+      run: terraform apply -auto-approve tfplan
 
   docker_push:
     name: docker_push

@@ -10,8 +10,8 @@ on:
     - main
 
 jobs:
-  terraform:
-    name: terraform
+  Deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -42,15 +42,17 @@ jobs:
 
     - name: "Docker Login to ACR"
       run: |
-        username=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .clientId)
-        password=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .clientSecret)
-        tenant=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .tenantId)
+        username=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r .clientId)
+        password=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r .clientSecret)
+        tenant=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r .tenantId)
 
         # Get the access token and grant access to client credentials on the ACR
         token=$(curl -X POST -d "grant_type=client_credentials&client_id=${username}&client_secret=${password}&resource=https://management.azure.com/" https://login.microsoftonline.com/${tenant}/oauth2/token | jq -r .access_token)
 
-        # Get the credetnials for the ACr
-        rest_credential=$(curl --tlsv1.2 -X GET -H "Host: management.azure.com" -H "Authorization: Bearer ${token}" -H "content-Type: application/json" -H "Content-Length: 0" https://management.azure.com/subscriptions/d9cd4c0d-292c-42e8-9f30-347d1f845e1b/resourceGroups/rg-sedaro-nano-prod/providers/Microsoft.containerRegistry/registries/acrsedaronanoprod/listCredentials?api-version=2023-01-01-preview)
+        # Get the credetnials for the ACR
+        resource_group_name="rg-sedaro-nano-prod"   # magic numbers
+        registry_name="acrsedaronanoprod"           # magic numbers
+        rest_credential=$(curl --tlsv1.2 -X GET -H "Host: management.azure.com" -H "Authorization: Bearer ${token}" -H "content-Type: application/json" -H "Content-Length: 0" https://management.azure.com/subscriptions/d9cd4c0d-292c-42e8-9f30-347d1f845e1b/resourceGroups/${resource_group_name}/providers/Microsoft.containerRegistry/registries/${registry_name}/listCredentials?api-version=2023-01-01-preview)
         if [[ $? -ne 0 || -z "${rest_credential}" ]]; then
           echo "Failed to get ACR credentials"
           exit 1

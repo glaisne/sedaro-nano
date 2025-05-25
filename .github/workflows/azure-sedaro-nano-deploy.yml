@@ -25,7 +25,7 @@ jobs:
 
     - name: terraform init
       run: terraform init
-      working-directory: terraform
+      working-directory: infrastructure
 
     - name: Azure Login
       uses: azure/login@v2
@@ -34,11 +34,11 @@ jobs:
 
     - name: terraform plan
       run: terraform plan -out=tfplan
-      working-directory: terraform
+      working-directory: infrastructure
 
     - name: terraform apply
       run: terraform apply -auto-approve tfplan
-      working-directory: terraform
+      working-directory: infrastructure
 
     - name: "Docker Login to ACR"
       run: |

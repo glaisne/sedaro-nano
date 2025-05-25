@@ -1,84 +1,84 @@
 name: Azure Sedaro Nano Deploy
 
 on:
-    push:
-        branches:
-        - main
-    pull_request:
-        types: popend, synchronize, reopened, closed]
-       branches:
-            - main
+  push:
+    branches:
+    - main
+  pull_request:
+    types: popend, synchronize, reopened, closed]
+    branches:
+    - main
 
 jobs:
-    terraform:
-        name: terraform
-        runs-on: ubuntu-latest
-        steps:
-            -name: Checkout code
-            uses: actions/checkout@v4
+  terraform:
+    name: terraform
+    runs-on: ubuntu-latest
+    steps:
+      -name: Checkout code
+      uses: actions/checkout@v4
 
-            -name: setup terraform
-                uses: hashicorp/setup-terraform@v1
-                with:
-                    terraform_version: 1.12.1
-                    cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
+    -name: setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.12.1
+        cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
 
-            - name: terraform init
-                run: terraform init
+      - name: terraform init
+        run: terraform init
 
-            - uses: azure/login@v2
-                with:
-                    creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-            - name: terraform plan
-                run: terraform plan -out=tfplan
+      - name: terraform plan
+        run: terraform plan -out=tfplan
 
-            - name: terraform apply
-                run: terraform apply -auto-approve tfplan
+      - name: terraform apply
+        run: terraform apply -auto-approve tfplan
 
-    docker_push:
-        name: docker_push
-        runs-on: ubuntu-latest
-        steps:
-            # get credentials of ACR
-            - name: "Docker Login to ACR"
-                run: |
-                    username=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .clientId)
-                    password=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .clientSecret)
-                    tenant=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .tenantId)
+  docker_push:
+    name: docker_push
+    runs-on: ubuntu-latest
+    steps:
+      # get credentials of ACR
+      - name: "Docker Login to ACR"
+        run: |
+          username=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .clientId)
+          password=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .clientSecret)
+          tenant=$(echo ${{ secrets.AZURE_CREDENTIALS }} | jq -r .tenantId)
 
-                    # Get the access token and grant access to client credentials on the ACR
-                    token=$(curl -X POST -d "grant_type=client_credentials&client_id=${username}&client_secret=${password}&resource=https://management.azure.com/" https://login.microsoftonline.com/${tenant}/oauth2/token | jq -r .access_token)"
+          # Get the access token and grant access to client credentials on the ACR
+          token=$(curl -X POST -d "grant_type=client_credentials&client_id=${username}&client_secret=${password}&resource=https://management.azure.com/" https://login.microsoftonline.com/${tenant}/oauth2/token | jq -r .access_token)"
 
-                    # Get the credetnials for the ACr
-                    rest_credential=$(curl --tlsv1.2 -X GET -H "Host: management.azure.com" -H "Authorization: Bearer ${access_token}" -H "content-Type: application/json" -H "Content-Length: 0" https://management.azure.com/subscriptions/d9cd4c0d-292c-42e8-9f30-347d1f845e1b/resourceGroups/rg-sedaro-nano-prod/providers/Microsoft.containerRegistry/registries/acrsedaronanoprod/listCredentials?api-version=2023-01-01-preview)
-                    if [[ $? -ne 0 || -z "${rest_credential}" ]]; then
-                        echo "Failed to get ACR credentials"
-                        exit 1
-                    fi
+          # Get the credetnials for the ACr
+          rest_credential=$(curl --tlsv1.2 -X GET -H "Host: management.azure.com" -H "Authorization: Bearer ${access_token}" -H "content-Type: application/json" -H "Content-Length: 0" https://management.azure.com/subscriptions/d9cd4c0d-292c-42e8-9f30-347d1f845e1b/resourceGroups/rg-sedaro-nano-prod/providers/Microsoft.containerRegistry/registries/acrsedaronanoprod/listCredentials?api-version=2023-01-01-preview)
+          if [[ $? -ne 0 || -z "${rest_credential}" ]]; then
+            echo "Failed to get ACR credentials"
+            exit 1
+          fi
 
-                    username=$(echo "${rest_credential}" | jq -r .username)
-                    password=$(echo "${rest_credential}" | jq -r .passwords[0].value)
-                    if [[ -z "${username}" || -z "${password}" ]]; then
-                        echo "Failed to get ACR credentials"
-                        exit 1
-                    fi
-                    
-                    # Docker Login
-                    docker login acrsedaronanoprod.azurecr.io -u "${username}" -p "${password}"
-                    if [[ $? -ne 0 ]]; then
-                        echo "Docker login failed"
-                        exit 1
-                    fi
+          username=$(echo "${rest_credential}" | jq -r .username)
+          password=$(echo "${rest_credential}" | jq -r .passwords[0].value)
+          if [[ -z "${username}" || -z "${password}" ]]; then
+            echo "Failed to get ACR credentials"
+            exit 1
+          fi
+          
+          # Docker Login
+          docker login acrsedaronanoprod.azurecr.io -u "${username}" -p "${password}"
+          if [[ $? -ne 0 ]]; then
+            echo "Docker login failed"
+            exit 1
+          fi
 
-                    for image in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
-                        docker tag "${image}" acrsedaronanoprod.azurecr.io/"${image}"
-                        docker push acrsedaronanoprod.azurecr.io/"${image}"
+          for image in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
+            docker tag "${image}" acrsedaronanoprod.azurecr.io/"${image}"
+            docker push acrsedaronanoprod.azurecr.io/"${image}"
 
-                        # todo: Add confirmation docker image pushed
-                    done
+            # todo: Add confirmation docker image pushed
+          done
 
-                    # todo (optional): remove 'grant_type=client_credentials'
+          # todo (optional): remove 'grant_type=client_credentials'
 
-        # helm install
+    # helm install
 

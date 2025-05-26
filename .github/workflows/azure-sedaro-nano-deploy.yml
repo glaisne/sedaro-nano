@@ -41,10 +41,12 @@ jobs:
       working-directory: infrastructure
 
     - name: "Docker Login to ACR"
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       run: |
-        username=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.clientId')
-        password=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.clientSecret')
-        tenant=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.tenantId')
+        username=$(echo "${AZURE_CREDENTIALS}" | jq -r '.clientId')
+        password=$(echo "${AZURE_CREDENTIALS}" | jq -r '.clientSecret')
+        tenant=$(echo "${AZURE_CREDENTIALS}" | jq -r '.tenantId')
 
         # Get the access token and grant access to client credentials on the ACR
         token=$(curl -X POST -d "grant_type=client_credentials&client_id=${username}&client_secret=${password}&resource=https://management.azure.com/" https://login.microsoftonline.com/${tenant}/oauth2/token | jq -r .access_token)
@@ -83,3 +85,10 @@ jobs:
 
     # helm install
 
+    - name: docker build
+      run: |
+        docker build -t sedaro-nano:latest .
+        if [[ $? -ne 0 ]]; then
+          echo "Docker build failed"
+          exit 1
+        fi

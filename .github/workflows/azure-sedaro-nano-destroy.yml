@@ -1,4 +1,4 @@
-name: Azure Sedaro Nano Deploy
+name: Azure Sedaro Nano DESTROY
 
 on:
   workflow_dispatch:

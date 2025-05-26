@@ -3,8 +3,8 @@ kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    app: {{ .Image.Webservice }}
-  name: {{ .Image.Webservice }}
+    app: {{ values.Image.WebServiceName }}
+  name: {{ values.Image.WebServiceName }}
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
@@ -13,17 +13,23 @@ spec:
     protocol: TCP
     targetPort: 3030
   selector:
-    app: {{ .Image.Webservice }}
+    app: {{ values.Image.WebServiceName }}
   type: LoadBalancer
+  Pods:
+    - name: {{ values.Release.Name }}
+      image: {{ values.Image.Webimage }}
+      ports:
+        - containerPort: 3030
+          protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    app: {{ .Image.Appservice }}
-  name: {{ .Image.Appservice }}
-  namespace: {{ .Release.Namespace }}
+    app: {{ values.Image.AppServiceName }}
+  name: {{ values.Image.AppServiceName }}
+  namespace: {{ values.Release.Namespace }}
 spec:
   ports:
   - name: 8000-8000
@@ -31,5 +37,11 @@ spec:
     protocol: TCP
     targetPort: 8000
   selector:
-    app: {{ .Image.Appservice }}
+    app: {{ values.Image.AppServiceName }}
   type: LoadBalancer
+  Pods:
+    - name: {{ values.Release.Name }}
+      image: {{ values.Image.Appimage }}
+      ports:
+        - containerPort: 3030
+          protocol: TCP

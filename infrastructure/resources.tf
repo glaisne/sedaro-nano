@@ -34,7 +34,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
         network_plugin_mode = "overlay"
         load_balancer_sku = "standard"
         service_cidr = "10.0.3.0/24"
-        dns_service_ip = "10.0.4.1"
+        dns_service_ip = "10.0.3.1"
     }
 
     default_node_pool {

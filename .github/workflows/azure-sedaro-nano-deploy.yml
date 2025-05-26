@@ -39,14 +39,13 @@ jobs:
       run: terraform apply -auto-approve tfplan
       working-directory: infrastructure
 
-    - name: docker build
+    - name: docker compose
       run: |
-        docker compse -f docker-compose.yml build
+        docker compose -f docker-compose.yml build
         if [[ $? -ne 0 ]]; then
           echo "Docker build failed"
           exit 1
         fi
-
 
     - name: "Docker Login to ACR"
       env:

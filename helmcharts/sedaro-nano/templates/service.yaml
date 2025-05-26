@@ -15,8 +15,6 @@ spec:
   selector:
     app: {{ .Image.Webservice }}
   type: LoadBalancer
-status:
-  loadBalancer: {}
 ---
 apiVersion: v1
 kind: Service
@@ -35,5 +33,3 @@ spec:
   selector:
     app: {{ .Image.Appservice }}
   type: LoadBalancer
-status:
-  loadBalancer: {}

@@ -4,11 +4,6 @@ resource "azurerm_virtual_network" "vnet" {
     location            = azurerm_resource_group.rg.location
     resource_group_name = azurerm_resource_group.rg.name
 
-    # subnet {
-    #     name           = "subnet-${var.project_name}-${var.environment["shortname"]}"
-    #     address_prefixes  = ["10.0.0.0/16"]
-    # }
-
     ddos_protection_plan {
         id = azurerm_network_ddos_protection_plan.ddos_protection.id
         enable = true
@@ -27,7 +22,7 @@ resource "azurerm_subnet" "subnet-pods" {
     name                 = "subnet-pods"
     resource_group_name  = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.vnet.name
-    address_prefixes     = ["10.0.2.0/16"]
+    address_prefixes     = ["10.0.2.0/24"]
 
 }
 

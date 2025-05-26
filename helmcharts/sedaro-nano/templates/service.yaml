@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{ .Image.Webservice }}
+  name: {{ .Image.Webservice }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: 3030-3030
+    port: 3030
+    protocol: TCP
+    targetPort: 3030
+  selector:
+    app: {{ .Image.Webservice }}
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{ .Image.Appservice }}
+  name: {{ .Image.Appservice }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: 8000-8000
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: {{ .Image.Appservice }}
+  type: LoadBalancer
+status:
+  loadBalancer: {}

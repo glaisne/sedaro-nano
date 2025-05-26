@@ -96,4 +96,10 @@ jobs:
         # todo (optional): remove 'grant_type=client_credentials'
 
     # helm install
+    - name: helm install
+      run: |
+        cd helmcharts
+        helm install sedaro-nano-prod ./sedaro-nano \
+          --namespace sedaro-nano-prod \
+          --create-namespace
 

@@ -1,0 +1,29 @@
+name: Azure Sedaro Nano Deploy
+
+on:
+  workflow_dispatch:
+
+
+
+jobs:
+  Destroy:
+    name: Destroy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.12.1
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: terraform destroy
+      run: terraform apply -destroy -auto-approve
+      working-directory: infrastructure
+

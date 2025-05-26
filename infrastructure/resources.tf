@@ -30,12 +30,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
     network_profile {
         network_plugin = "azure"
+        network_policy = "azure"
+        network_plugin_mode = "overlay"
+        vnet_subnet_id = azurerm_subnet.subnet-pods.id
+        load_balancer_sku = "standard"
     }
 
     default_node_pool {
         name       = "default"
         node_count = 1
         vm_size   = "Standard_DS2_v2"
+        vnet_subnet_id = azurerm_subnet.pip-ag.id
     }
 
     identity {

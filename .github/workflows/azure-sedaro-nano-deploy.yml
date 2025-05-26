@@ -47,7 +47,7 @@ jobs:
           exit 1
         fi
 
-    - name: "Docker Login to ACR"
+    - name: "Docker Push to ACR"
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       run: |
@@ -98,6 +98,7 @@ jobs:
     # helm install
     - name: helm install
       run: |
+        az aks get-credentials --resource-group rg-sedaro-nano-prod --name aks-sedaro-nano-prod --overwrite-existing
         cd helmcharts
         helm install sedaro-nano-prod ./sedaro-nano \
           --namespace sedaro-nano-prod \

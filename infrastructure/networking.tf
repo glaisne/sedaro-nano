@@ -97,7 +97,7 @@ resource "azurerm_application_gateway" "network" {
 
     gateway_ip_configuration {
         name      = "ag-ip-configuration"
-        subnet_id = azurerm_subnet.pip-ag.id
+        subnet_id = azurerm_subnet.subnet-appgateway.id
     }
 
     frontend_port {

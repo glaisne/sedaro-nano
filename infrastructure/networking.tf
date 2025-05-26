@@ -21,13 +21,6 @@ resource "azurerm_subnet" "subnet-appgateway" {
     resource_group_name  = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes     = ["10.0.1.0/24"]
-    delegation {
-        name = "appgatewaydelegation"
-        service_delegation {
-            name    = "Microsoft.Network/applicationGateways"
-            actions = ["Microsoft.Network/applicationGateways/write", "Microsoft.Network/applicationGateways/read"]
-        }
-    }
 }
 
 resource "azurerm_subnet" "subnet-pods" {

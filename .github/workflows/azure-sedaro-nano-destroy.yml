@@ -23,6 +23,10 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: terraform init
+      run: terraform init
+      working-directory: infrastructure
+
     - name: terraform destroy
       run: terraform apply -destroy -auto-approve
       working-directory: infrastructure

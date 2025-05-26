@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: {{ Values.Release.Name }}
-  name: {{ Values.Release.Name }}
-  namespace: {{ Values.Release.Namespace }}
+    app: {{ .Values.Release.Name }}
+  name: {{ .Values.Release.Name }}
+  namespace: {{ .Values.Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ Values.Release.Name }}
+      app: {{ .Values.Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ Values.Release.Name }}
+        app: {{ .Values.Release.Name }}
     spec:
       containers:
-      - image: {{ Values.Image.AppImage }}
-        name: {{ Values.Image.App }}
-      - image: {{ Values.Image.WebImage }}
-        name: {{ Values.Image.Web }}
+      - image: {{ .Values.Image.AppImage }}
+        name: {{ .Values.Image.App }}
+      - image: {{ .Values.Image.WebImage }}
+        name: {{ .Values.Image.Web }}

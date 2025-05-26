@@ -42,9 +42,9 @@ jobs:
 
     - name: "Docker Login to ACR"
       run: |
-        username=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r .clientId)
-        password=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r .clientSecret)
-        tenant=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r .tenantId)
+        username=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.clientId')
+        password=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.clientSecret')
+        tenant=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.tenantId')
 
         # Get the access token and grant access to client credentials on the ACR
         token=$(curl -X POST -d "grant_type=client_credentials&client_id=${username}&client_secret=${password}&resource=https://management.azure.com/" https://login.microsoftonline.com/${tenant}/oauth2/token | jq -r .access_token)

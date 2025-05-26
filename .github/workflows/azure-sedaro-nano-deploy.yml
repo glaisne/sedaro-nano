@@ -5,7 +5,7 @@ on:
     branches:
     - main
   pull_request:
-    types: popend, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened, closed]
     branches:
     - main
 
@@ -21,7 +21,6 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.12.1
-        cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
 
     - name: Azure Login
       uses: azure/login@v2
@@ -39,6 +38,15 @@ jobs:
     - name: terraform apply
       run: terraform apply -auto-approve tfplan
       working-directory: infrastructure
+
+    - name: docker build
+      run: |
+        docker compse -f docker-compose.yml build
+        if [[ $? -ne 0 ]]; then
+          echo "Docker build failed"
+          exit 1
+        fi
+
 
     - name: "Docker Login to ACR"
       env:
@@ -89,13 +97,4 @@ jobs:
         # todo (optional): remove 'grant_type=client_credentials'
 
     # helm install
-
-    - name: docker build
-      run: |
-        docker build -t sedaro-nano:latest .
-        if [[ $? -ne 0 ]]; then
-          echo "Docker build failed"
-          exit 1
-        fi
-
 

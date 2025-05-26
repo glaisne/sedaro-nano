@@ -3,8 +3,10 @@ Release:
   Namespace: sedaro-nano-prod
 
 Image:
-  AppServiceName: sedaro-nano-app-service
+  AppName: sedaro-nano-app
   AppImage: acrsedaronanoprod.azurecr.io/sedaro-nano-app:latest
-  WebServiceName: sedaro-nano-web-service
+  AppServiceName: sedaro-nano-app-service
+  WebName: sedaro-nano-web
   WebImage: acrsedaronanoprod.azurecr.io/sedaro-nano-web:latest
+  WebServiceName: sedaro-nano-web-service
 Replicas: 1

@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - image: {{ .Values.Image.AppImage }}
-        name: {{ .Values.Image.App }}
+        name: {{ .Values.Image.AppName }}
       - image: {{ .Values.Image.WebImage }}
-        name: {{ .Values.Image.Web }}
+        name: {{ .Values.Image.WebName }}

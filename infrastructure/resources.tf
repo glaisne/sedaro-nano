@@ -32,7 +32,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
         network_plugin = "azure"
         network_policy = "azure"
         network_plugin_mode = "overlay"
-        vnet_subnet_id = azurerm_subnet.subnet-pods.id
         load_balancer_sku = "standard"
     }
 

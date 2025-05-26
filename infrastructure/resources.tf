@@ -33,6 +33,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
         network_policy = "azure"
         network_plugin_mode = "overlay"
         load_balancer_sku = "standard"
+        service_cidr = "10.0.3.0/24"
     }
 
     default_node_pool {

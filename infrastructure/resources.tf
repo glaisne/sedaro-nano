@@ -40,7 +40,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     default_node_pool {
         name       = "default"
         node_count = 1
-        vm_size   = "Standard_DS2_v2"
+        vm_size   = "Standard_D2as_v6"
         vnet_subnet_id = azurerm_subnet.subnet-pods.id
     }
 
@@ -59,4 +59,5 @@ resource "azurerm_role_assignment" "acr_pull" {
     principal_id   = azurerm_kubernetes_cluster.aks.identity.principal_id
     role_definition_name = "AcrPull"
     scope          = azurerm_container_registry.acr.id
+    skip_service_principal_aad_check = true
 }

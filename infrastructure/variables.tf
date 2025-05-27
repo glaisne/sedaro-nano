@@ -1,13 +1,13 @@
 variable "tenantId" {
     description = "Azure tenant id"
     type        = string
-    default     = "20204499-bd35-4d51-a6f3-86f5ba307fb2"
+    default     = "<Tenant_id>"
 }
 
 variable "subscriptionId" {
     description = "Subscription_id"
     type        = string
-    default     = "d9cd4c0d-292c-42e8-9f30-347d1f845e1b"
+    default     = "<Subscription_id>"
 }
 
 variable "project_name" {

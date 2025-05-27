@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: {{ .Values.Release.Name }}
-  name: {{ .Values.Release.Name }}
+  name: {{ .Values.Image.AppName }}
   namespace: {{ .Values.Release.Namespace }}
 spec:
   replicas: 1
@@ -21,6 +21,25 @@ spec:
         ports:
           - containerPort: 8000
             protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.Release.Name }}
+  name: {{ .Values.Image.WebName }}
+  namespace: {{ .Values.Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.Release.Name }}
+    spec:
+      containers:
       - image: {{ .Values.Image.WebImage }}
         name: {{ .Values.Image.WebName }}
         ports:

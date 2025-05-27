@@ -18,5 +18,11 @@ spec:
       containers:
       - image: {{ .Values.Image.AppImage }}
         name: {{ .Values.Image.AppName }}
+        ports:
+          - containerPort: 8000
+            protocol: TCP
       - image: {{ .Values.Image.WebImage }}
         name: {{ .Values.Image.WebName }}
+        ports:
+          - containerPort: 3030
+            protocol: TCP

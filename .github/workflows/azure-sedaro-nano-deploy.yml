@@ -94,8 +94,6 @@ jobs:
           # todo: Add confirmation docker image pushed
         done
 
-        # todo (optional): remove 'grant_type=client_credentials'
-
     # helm install
     - name: helm install
       run: |
